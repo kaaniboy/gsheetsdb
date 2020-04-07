@@ -2,8 +2,9 @@
 const axios = require('axios');
 
 class SheetsDB {
-    constructor(sheetId) {
+    constructor(sheetId, debugMode=false) {
         this.sheetId = sheetId;
+        this.debugMode = debugMode;
         this.tables = {};
     }
 
@@ -32,7 +33,13 @@ class SheetsTable {
             this._mapQueryColumnNames(query)
         );
         const res = await axios.get(url);
-        return this._extractData(res.data);
+        const data = this._extractData(res.data);
+        
+        if (data.errors) {
+            const message = data.errors[0].detailed_message;
+            return this._error(query, message);
+        }
+        return data.table;
     }
 
     _createQueryUrl(query) {
@@ -48,15 +55,15 @@ class SheetsTable {
             .substring(0, data.length - 2)
             .replace(this._DATA_PREFIX, '');
 
-        return JSON.parse(cleanedData).table;
+        return JSON.parse(cleanedData);
     }
 
     _createColumnMappings(cols) {
         const mappings = {};
         let i = 0;
         for (let c of cols) {
-            const key = String.fromCharCode(65 + (i++));
-            mappings[key] = c.name.toLowerCase();
+            const sheetColName = String.fromCharCode(65 + (i++));
+            mappings[c.name.toLowerCase()] = sheetColName;
         }
         return mappings;
     }
@@ -72,6 +79,16 @@ class SheetsTable {
         }
         return query;
     }
+
+    _error(query, message) {
+        if (this.db.debugMode) {
+            console.error(query + '\n' + message);
+        }
+        return {
+            query: query,
+            error: message
+        };
+    }
 }
 
 (async () => {
@@ -85,6 +102,11 @@ class SheetsTable {
             { name: 'age'}
         ]
     });
-
-    const data = await db.table('users').query("SELECT MAX(|id|)");
+    
+    const data = await db.table('users').query("SELECT |id| GROUP BY");
+    if (data.error) {
+        console.log('ERROR!');
+    } else {
+        console.log(data);
+    }
 })();
