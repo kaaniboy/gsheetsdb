@@ -32,14 +32,22 @@ class SheetsTable {
         const url = this._createQueryUrl(
             this._mapQueryColumnNames(query)
         );
-        const res = await axios.get(url);
-        const data = this._extractData(res.data);
-        
-        if (data.errors) {
-            const message = data.errors[0].detailed_message;
-            return this._error(query, message);
+
+        let res;
+        try {
+            res = await axios.get(url);
+        } catch (e) {
+            return this._error(`Request failed: ${e.message}`, query);
         }
-        return data.table;
+        
+        const json = this._extractJson(res.data);
+        
+        if (json.errors) {
+            const message = data.errors[0].detailed_message;
+            return this._error(message, query);
+        }
+
+        return this._extractRowsFromJson(json);
     }
 
     _createQueryUrl(query) {
@@ -50,12 +58,16 @@ class SheetsTable {
                 `${this.db.sheetId}/gviz/tq?sheet=${tableName}&tq=${encodedQuery}`;
     }
 
-    _extractData(data) {
+    _extractJson(data) {
         const cleanedData = data
             .substring(0, data.length - 2)
             .replace(this._DATA_PREFIX, '');
 
         return JSON.parse(cleanedData);
+    }
+
+    _extractRowsFromJson(json) {
+        return json;
     }
 
     _createColumnMappings(cols) {
@@ -80,7 +92,7 @@ class SheetsTable {
         return query;
     }
 
-    _error(query, message) {
+    _error(message, query) {
         if (this.db.debugMode) {
             console.error(query + '\n' + message);
         }
@@ -102,11 +114,7 @@ class SheetsTable {
             { name: 'age'}
         ]
     });
-    
-    const data = await db.table('users').query("SELECT |id| GROUP BY");
-    if (data.error) {
-        console.log('ERROR!');
-    } else {
-        console.log(data);
-    }
+
+    const data = await db.table('users').query("SELECT |id|, |name|, |age|");
+    console.log(data);
 })();
