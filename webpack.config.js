@@ -1,7 +1,8 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/sheetsdb.js',
+  mode: 'development',
+  entry: './src/main.js',
   output: {
     filename: 'sheetsdb.js',
     path: path.resolve(__dirname, 'dist'),
