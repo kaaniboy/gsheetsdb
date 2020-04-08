@@ -1,7 +1,7 @@
 import SheetsTable from './SheetsTable';
 
 export default class SheetsDB {
-    constructor(sheetId, debugMode=false) {
+    constructor(sheetId, debugMode=true) {
         this.sheetId = sheetId;
         this.debugMode = debugMode;
         this.tables = {};

@@ -22,7 +22,7 @@ export default class SheetsQuery {
         const json = this._extractJson(res.data);
         
         if (json.errors) {
-            const message = data.errors[0].detailed_message;
+            const message = json.errors[0].detailed_message;
             return queryError(message, this.debugMode);
         }
 
@@ -52,6 +52,21 @@ export default class SheetsQuery {
             return rows;
         }
         rows.shift();
-        return rows.map(r => r.c.map(c => c.v));
+        
+        const labels = json.table.cols.map(c => c.label);
+        const labelledRows = this._addRowLabels(rows, labels);
+        return labelledRows;
+    }
+
+    _addRowLabels(rows, labels) {
+        return rows
+            .map(r => r.c.map(c => c.v))
+            .map(r => {
+                const labelledRow = {};
+                r.map((v, i) => {
+                    labelledRow[labels[i]] = v;
+                });
+                return labelledRow;
+            });
     }
 }

@@ -10,7 +10,10 @@ export default class SheetsTable {
     }
 
     async query(query) {
+        query = query.toLowerCase();
+        query = this._appendLabels(query);
         query = this._mapQueryColumnNames(query);
+
         return await new SheetsQuery(this).run(query);
     }
 
@@ -19,13 +22,12 @@ export default class SheetsTable {
         let i = 0;
         for (let c of cols) {
             const sheetColName = String.fromCharCode(65 + (i++));
-            mappings[c.name.toLowerCase()] = sheetColName;
+            mappings[c.name] = sheetColName;
         }
         return mappings;
     }
 
     _mapQueryColumnNames(query) {
-        query = query.toLowerCase();
         let offset = 0;
         for (let { name } of this.schema.cols) {
             query = query.replace(
@@ -35,4 +37,33 @@ export default class SheetsTable {
         }
         return query;
     }
+
+    _appendLabels(query) {
+        const colsListingStart = 'select'.length;
+        let colsListingEnd = query.length;
+
+        for (let term of COLS_LISTING_END) {
+            if (query.includes(term)) {
+                colsListingEnd = Math.min(colsListingEnd, query.indexOf(term));
+            }
+        }
+
+        const colsListing = query.substring(
+            colsListingStart, 
+            colsListingEnd
+        ).trim().replace(/\s/g, '').split(',');
+
+        const labels = colsListing.map(col => {
+            const extractedCol = col.replace(/\|/g, '');
+            return `${col} '${extractedCol}'`;
+        }).join(', ')
+
+        return query + ' label ' + labels;
+    }
 }
+
+const COLS_LISTING_END = [
+    'where', 'group by', 'pivot', 
+    'order by', 'limit', 'offset', 
+    'label', 'format', 'options'
+];

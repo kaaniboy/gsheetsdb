@@ -13,6 +13,7 @@ import SheetsDB from './SheetsDB';
         ]
     });
 
-    const data = await db.table('users').query("SELECT |id|, |name|, |age|");
-    console.log(data);
+    const data = await db.table('users').query(
+        "SELECT |age|, |id|, |name|"
+    );
 })();
