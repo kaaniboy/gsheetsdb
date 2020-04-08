@@ -4,10 +4,8 @@
   "description": "",
   "main": "sheetsdb.js",
   "private": true,
-  
   "scripts": {
-    "build": "webpack",
-    "test": "python -m SimpleHTTPServer 8000"
+    "test": "npx webpack && python -m SimpleHTTPServer 8000"
   },
   "author": "Kaan Aksoy",
   "license": "ISC",
