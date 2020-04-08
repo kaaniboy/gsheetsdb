@@ -3,12 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "main": "sheetsdb.js",
+  "private": true,
+  
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack",
+    "test": "python -m SimpleHTTPServer 8000"
   },
-  "author": "",
+  "author": "Kaan Aksoy",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2"
+  },
+  "devDependencies": {
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
   }
 }

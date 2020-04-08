@@ -1,5 +1,5 @@
 // https://stackoverflow.com/questions/19942619/query-specific-sheets-of-a-google-spreadsheet
-const axios = require('axios');
+import { axios } from 'axios';
 
 class SheetsDB {
     constructor(sheetId, debugMode=false) {
