@@ -5,7 +5,7 @@
   "main": "sheetsdb.js",
   "private": true,
   "scripts": {
-    "test": "npx webpack && python -m SimpleHTTPServer 8000"
+    "test": "npx webpack-dev-server --open"
   },
   "author": "Kaan Aksoy",
   "license": "ISC",
@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   }
 }
