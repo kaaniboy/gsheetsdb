@@ -67,7 +67,12 @@ class SheetsTable {
     }
 
     _extractRowsFromJson(json) {
-        return json;
+        const rows = json.table.rows;
+        if (rows.length === 0) {
+            return rows;
+        }
+        rows.shift();
+        return rows.map(r => r.c.map(c => c.v));
     }
 
     _createColumnMappings(cols) {
