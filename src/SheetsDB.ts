@@ -4,13 +4,9 @@ import { SheetsTableSchema } from './Types';
 type Tables = { [key: string]: SheetsTable; };
 
 export default class SheetsDB {
-    sheetId: string;
-    debugMode: boolean;
     tables: Tables;
 
-    constructor(sheetId: string, debugMode = true) {
-        this.sheetId = sheetId;
-        this.debugMode = debugMode;
+    constructor(public sheetId: string, public debugMode = true) {
         this.tables = {};
     }
 
