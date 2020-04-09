@@ -16,4 +16,5 @@ import SheetsDB from './SheetsDB';
     const data = await db.table('users').query(
         "SELECT |age|, |id|, |name|"
     );
+    console.log(data);
 })();

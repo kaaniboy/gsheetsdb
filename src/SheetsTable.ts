@@ -1,6 +1,6 @@
 import SheetsQuery from './SheetsQuery';
 import SheetsDB from './SheetsDB';
-import { SheetsTableSchema, SheetsTableColumn } from './SheetsTableSchema';
+import { SheetsTableSchema, SheetsTableColumn } from './Types';
 
 type ColumnMappings = {[key: string]: string; };
 
@@ -35,7 +35,7 @@ export default class SheetsTable {
         return mappings;
     }
 
-    _mapQueryColumnNames(query: string) {
+    _mapQueryColumnNames(query: string): string {
         let offset = 0;
         for (let { name } of this.schema.cols) {
             query = query.replace(
@@ -46,7 +46,7 @@ export default class SheetsTable {
         return query;
     }
 
-    _appendLabels(query: string) {
+    _appendLabels(query: string): string {
         const colsListingStart = 'select'.length;
         let colsListingEnd = query.length;
 
