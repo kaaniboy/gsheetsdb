@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { queryError } from './SheetsDBErrors';
 import SheetsTable from './SheetsTable';
+import { SheetsResultSet, SheetsResultSetRow } from './Types';
 
 type Response = { data: string; };
 type ResponseTable = {
@@ -12,9 +13,6 @@ type ResponseTable = {
     rows: ResponseTableRow[];
 };
 type ResponseTableRow = { c: [{ v: number | string; }]; }
-
-// TODO: Make this an interface
-type LabelledRow = { [key: string]: number | string; };
 
 export default class SheetsQuery {
     static _DATA_PREFIX = '/*O_o*/\ngoogle.visualization.Query.setResponse(';
@@ -41,7 +39,7 @@ export default class SheetsQuery {
             return queryError(message, query, this.debugMode);
         }
 
-        return this._extractRowsFromJson(json);
+        return this._extractResultSetFromJson(json);
     }
 
     _createQueryUrl(query: string): string {
@@ -60,7 +58,7 @@ export default class SheetsQuery {
         return JSON.parse(cleanedData);
     }
 
-    _extractRowsFromJson(json: any): LabelledRow[] {
+    _extractResultSetFromJson(json: any): SheetsResultSet {
         const rows = json.table.rows;
         if (rows.length === 0) {
             return rows;
@@ -73,15 +71,17 @@ export default class SheetsQuery {
         return labelledRows;
     }
 
-    _addRowLabels(rows: ResponseTableRow[], labels: string[]): LabelledRow[] {
-        return rows
-            .map(r => r.c.map(c => c.v))
-            .map(r => {
-                const labelledRow: LabelledRow = {};
-                r.map((v, i) => {
-                    labelledRow[labels[i]] = v;
-                });
-                return labelledRow;
-            });
+    _addRowLabels(rows: ResponseTableRow[], labels: string[]): SheetsResultSet {
+        return {
+            rows: rows
+                .map(r => r.c.map(c => c.v))
+                .map(r => {
+                    const resultSetRow: SheetsResultSetRow = {};
+                    r.map((v, i) => {
+                        resultSetRow[labels[i]] = v;
+                    });
+                    return resultSetRow;
+                })
+        };
     }
 }
