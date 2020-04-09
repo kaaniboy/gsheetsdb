@@ -13,6 +13,8 @@
     "axios": "^0.19.2"
   },
   "devDependencies": {
+    "ts-loader": "^6.2.2",
+    "typescript": "^3.8.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"

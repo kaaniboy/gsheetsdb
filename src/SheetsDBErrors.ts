@@ -1,4 +1,8 @@
-export function queryError(message, query, debugMode) {
+export function queryError(
+    message: string,
+    query: string,
+    debugMode = false
+) {
     if (debugMode) {
         console.error(query + '\n' + message);
     }

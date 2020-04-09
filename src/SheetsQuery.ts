@@ -1,15 +1,18 @@
 import axios from 'axios';
 import { queryError } from './SheetsDBErrors';
+import SheetsTable from './SheetsTable';
 
 export default class SheetsQuery {
-    constructor(table) {
-        this._DATA_PREFIX = '/*O_o*/\ngoogle.visualization.Query.setResponse(';
+    static _DATA_PREFIX = '/*O_o*/\ngoogle.visualization.Query.setResponse(';
+    table: SheetsTable;
+    debugMode: boolean;
 
+    constructor(table: SheetsTable) {
         this.table = table;
         this.debugMode = table.db.debugMode;
     }
 
-    async run(query) {
+    async run(query: string) {
         const url = this._createQueryUrl(query);
 
         let res;
@@ -20,16 +23,17 @@ export default class SheetsQuery {
         }
         
         const json = this._extractJson(res.data);
+        console.log(json);
         
         if (json.errors) {
             const message = json.errors[0].detailed_message;
-            return queryError(message, this.debugMode);
+            return queryError(message, query, this.debugMode);
         }
 
         return this._extractRowsFromJson(json);
     }
 
-    _createQueryUrl(query) {
+    _createQueryUrl(query: string) {
         const sheetId = this.table.db.sheetId;
         const tableName = this.table.schema.tableName;
         const encodedQuery = encodeURIComponent(query);
@@ -38,10 +42,10 @@ export default class SheetsQuery {
                 `${sheetId}/gviz/tq?sheet=${tableName}&tq=${encodedQuery}`;
     }
 
-    _extractJson(data) {
+    _extractJson(data: string) {
         const cleanedData = data
             .substring(0, data.length - 2)
-            .replace(this._DATA_PREFIX, '');
+            .replace(SheetsQuery._DATA_PREFIX, '');
 
         return JSON.parse(cleanedData);
     }
@@ -54,11 +58,12 @@ export default class SheetsQuery {
         rows.shift();
         
         const labels = json.table.cols.map(c => c.label);
+        
         const labelledRows = this._addRowLabels(rows, labels);
         return labelledRows;
     }
 
-    _addRowLabels(rows, labels) {
+    _addRowLabels(rows, labels: string[]) {
         return rows
             .map(r => r.c.map(c => c.v))
             .map(r => {

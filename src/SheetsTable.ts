@@ -1,15 +1,21 @@
 import SheetsQuery from './SheetsQuery';
+import SheetsDB from './SheetsDB';
+import { SheetsTableSchema, SheetsTableColumn } from './SheetsTableSchema';
+
+type ColumnMappings = {[key: string]: string; };
 
 export default class SheetsTable {
-    constructor(db, schema) {
-        this.db = db;
-        this.schema = schema;
-
+    _columnMappings: ColumnMappings;
+    
+    constructor(
+        public db: SheetsDB,
+        public schema: SheetsTableSchema
+    ) {
         this._columnMappings = 
             this._createColumnMappings(schema.cols);
     }
 
-    async query(query) {
+    async query(query: string) {
         query = query.toLowerCase();
         query = this._appendLabels(query);
         query = this._mapQueryColumnNames(query);
@@ -17,17 +23,19 @@ export default class SheetsTable {
         return await new SheetsQuery(this).run(query);
     }
 
-    _createColumnMappings(cols) {
-        const mappings = {};
+    _createColumnMappings(cols: SheetsTableColumn[] ): ColumnMappings {
+        const mappings: ColumnMappings = {};
         let i = 0;
+
         for (let c of cols) {
             const sheetColName = String.fromCharCode(65 + (i++));
             mappings[c.name] = sheetColName;
         }
+        
         return mappings;
     }
 
-    _mapQueryColumnNames(query) {
+    _mapQueryColumnNames(query: string) {
         let offset = 0;
         for (let { name } of this.schema.cols) {
             query = query.replace(
@@ -38,7 +46,7 @@ export default class SheetsTable {
         return query;
     }
 
-    _appendLabels(query) {
+    _appendLabels(query: string) {
         const colsListingStart = 'select'.length;
         let colsListingEnd = query.length;
 
