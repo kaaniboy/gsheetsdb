@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { queryError } from './SheetsDBErrors';
 import SheetsTable from './SheetsTable';
-import { SheetsResultSet, SheetsResultSetRow } from './Types';
+import { SheetsResultSetRow } from './Types';
+import SheetsResultSet from './SheetsResultSet';
 
 type Response = { data: string; };
 type ResponseTable = {
@@ -67,21 +68,18 @@ export default class SheetsQuery {
         
         const labels = json.table.cols.map((c: any) => c.label);
         const labelledRows = this._addRowLabels(rows, labels);
-
-        return labelledRows;
+        return new SheetsResultSet(labelledRows);
     }
 
-    _addRowLabels(rows: ResponseTableRow[], labels: string[]): SheetsResultSet {
-        return {
-            rows: rows
-                .map(r => r.c.map(c => c.v))
-                .map(r => {
-                    const resultSetRow: SheetsResultSetRow = {};
-                    r.map((v, i) => {
-                        resultSetRow[labels[i]] = v;
-                    });
-                    return resultSetRow;
-                })
-        };
+    _addRowLabels(rows: ResponseTableRow[], labels: string[]): SheetsResultSetRow[] {
+        return rows
+            .map(r => r.c.map(c => c.v))
+            .map(r => {
+                const resultSetRow: SheetsResultSetRow = {};
+                r.map((v, i) => {
+                    resultSetRow[labels[i]] = v;
+                });
+                return resultSetRow;
+            });
     }
 }
