@@ -23,5 +23,5 @@ describe('_createLabelsListing', () => {
         const query = 'select max(|id|)';
         const expected = "max(|id|) 'max(id)'";
         expect(usersTable._createLabelsListing(query)).toEqual(expected);
-    })
+    });
 });
