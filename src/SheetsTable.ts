@@ -16,8 +16,7 @@ export default class SheetsTable {
     }
 
     async query(query: string) {
-        query = query.toLowerCase();
-        query = this._appendLabels(query);
+        query = query.toLowerCase() + ' label ' + this._createLabelsListing(query);
         query = this._mapQueryColumnNames(query);
 
         return await new SheetsQuery(this).run(query);
@@ -46,7 +45,19 @@ export default class SheetsTable {
         return query;
     }
 
-    _appendLabels(query: string): string {
+    _createLabelsListing(query: string): string {
+        return this._createLabels(query).join(', ')
+    }
+
+    _createLabels(query: string): string[] {
+        const colsListing = this._extractColsListing(query);
+        return colsListing.map(col => {
+            const extractedCol = col.replace(/\|/g, '');
+            return `${col} '${extractedCol}'`;
+        })
+    }
+
+    _extractColsListing(query: string): string[] {
         const colsListingStart = 'select'.length;
         let colsListingEnd = query.length;
 
@@ -59,14 +70,12 @@ export default class SheetsTable {
         const colsListing = query.substring(
             colsListingStart, 
             colsListingEnd
-        ).trim().replace(/\s/g, '').split(',');
+        ).trim().replace(/\s/g, '');
 
-        const labels = colsListing.map(col => {
-            const extractedCol = col.replace(/\|/g, '');
-            return `${col} '${extractedCol}'`;
-        }).join(', ')
-
-        return query + ' label ' + labels;
+        if (colsListing.length === 0) {
+            return [];
+        }
+        return colsListing.split(',');
     }
 }
 
