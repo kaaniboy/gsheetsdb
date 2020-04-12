@@ -61,10 +61,9 @@ export default class SheetsQuery {
 
     _extractResultSetFromJson(json: any): SheetsResultSet {
         const rows = json.table.rows;
-        if (rows.length === 0) {
-            return rows;
+        if (rows.length > 1) {
+            rows.shift();
         }
-        rows.shift();
         
         const labels = json.table.cols.map((c: any) => c.label);
         const labelledRows = this._addRowLabels(rows, labels);

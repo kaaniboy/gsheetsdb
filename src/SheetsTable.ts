@@ -16,7 +16,8 @@ export default class SheetsTable {
     }
 
     async query(query: string) {
-        query = query.toLowerCase() + ' label ' + this._createLabelsListing(query);
+        query = query.toLowerCase() 
+            + ' label ' + this._createLabelsListing(query);
         query = this._mapQueryColumnNames(query);
 
         return await new SheetsQuery(this).run(query);
