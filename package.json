@@ -5,7 +5,8 @@
   "main": "sheetsdb.js",
   "private": true,
   "scripts": {
-    "test": "npx webpack-dev-server --open"
+    "start": "npx webpack-dev-server --open",
+    "test": "npx jest"
   },
   "author": "Kaan Aksoy",
   "license": "ISC",
