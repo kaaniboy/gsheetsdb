@@ -61,7 +61,10 @@ export default class SheetsQuery {
 
     _extractResultSetFromJson(json: any): SheetsResultSet {
         const rows = json.table.rows;
-        if (rows.length > 1) {
+
+        // Handle strange issue where queries sometimes
+        // return the header row of labels.
+        if (rows.length > 1 && rows[0].c[0] === null) {
             rows.shift();
         }
         
