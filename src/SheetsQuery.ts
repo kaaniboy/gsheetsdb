@@ -70,7 +70,9 @@ export default class SheetsQuery {
         
         const labels = json.table.cols.map((c: any) => c.label);
         const labelledRows = this._addRowLabels(rows, labels);
-        return new SheetsResultSet(labelledRows);
+        const resultSetName = this.table.schema.tableName;
+        
+        return new SheetsResultSet(resultSetName, labelledRows);
     }
 
     _addRowLabels(rows: ResponseTableRow[], labels: string[]): SheetsResultSetRow[] {

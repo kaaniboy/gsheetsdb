@@ -14,8 +14,21 @@ import SheetsResultSet from './SheetsResultSet';
         ]
     });
 
-    const users = <SheetsResultSet> await db.table('users').query(
-        "SELECT |age|, |id|, |name|"
+    db.linkTable({
+        tableName: 'orders',
+        cols: [
+            { name: 'id' },
+            { name: 'user_id' },
+            { name: 'name'}
+        ]
+    });
+
+    const orders = <SheetsResultSet> await db.table('orders').query(
+        "SELECT |id|, |user_id|, |name|"
     );
-    console.log(users);
+    const users = <SheetsResultSet> await db.table('users').query(
+        "SELECT |id|, |name|, |age|"
+    );
+
+    console.log(orders.leftJoinWith(users, 'user_id', 'id'));
 })();
