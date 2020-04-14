@@ -77,7 +77,8 @@ export default class SheetsQuery {
 
     _addRowLabels(rows: ResponseTableRow[], labels: string[]): SheetsResultSetRow[] {
         return rows
-            .map(r => r.c.map(c => c.v))
+            // Handle empty cells
+            .map(r => r.c.map(c => c !== null ? c.v : null))
             .map(r => {
                 const resultSetRow: SheetsResultSetRow = {};
                 r.map((v, i) => {

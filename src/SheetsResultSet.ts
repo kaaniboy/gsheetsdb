@@ -16,15 +16,16 @@ export default class SheetsResultSet {
         );
 
         const joinedRows = this.rows.map(leftRow => {
-            const matchingRightRow = right.first(rightRow => {
+            let matchingRightRow = right.first(rightRow => {
                 return leftRow[leftCol] === rightRow[rightCol];
-            });
+            }) || createEmptyRow(right.getColumns());
 
             return {
                 ...prefixColumns(this.name, leftRow, duplicateColumns),
                 ...prefixColumns(right.name, matchingRightRow, duplicateColumns)
             };
         });
+
         return new SheetsResultSet(this.name, joinedRows);
     }
 
@@ -83,4 +84,12 @@ function prefixColumns(
     }
 
     return prefixedRow;
+}
+
+function createEmptyRow(
+    columns: string[]
+): SheetsResultSetRow {
+    let emptyRow: SheetsResultSetRow = {};
+    columns.forEach(c => emptyRow[c] = null);
+    return emptyRow;
 }
