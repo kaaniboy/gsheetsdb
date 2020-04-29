@@ -5,14 +5,6 @@ import { SheetsResultSetRow } from './Types';
 import SheetsResultSet from './SheetsResultSet';
 
 type Response = { data: string; };
-type ResponseTable = {
-    cols: [{
-        id: string;
-        label: string;
-        type: string;
-    }];
-    rows: ResponseTableRow[];
-};
 type ResponseTableRow = { c: [{ v: number | string; }]; }
 
 export default class SheetsQuery {
