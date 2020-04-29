@@ -16,7 +16,6 @@ type ResponseTable = {
 type ResponseTableRow = { c: [{ v: number | string; }]; }
 
 export default class SheetsQuery {
-    static _DATA_PREFIX = '/*O_o*/\ngoogle.visualization.Query.setResponse(';
     debugMode: boolean;
 
     constructor(public table: SheetsTable) {
@@ -24,7 +23,7 @@ export default class SheetsQuery {
     }
 
     async run(query: string) {
-        const url = this._createQueryUrl(query);
+        const url = createQueryUrl(query, this.table);
 
         let res: Response;
         try {
@@ -33,58 +32,60 @@ export default class SheetsQuery {
             return queryError(`Request failed: ${e.message}`, query, this.debugMode);
         }
         
-        const json = this._extractJson(res.data);
+        const json = extractJson(res.data);
         
         if (json.errors) {
             const message = json.errors[0].detailed_message;
             return queryError(message, query, this.debugMode);
         }
 
-        return this._extractResultSetFromJson(json);
+        return extractResultSetFromJson(json, this.table);
     }
+}
 
-    _createQueryUrl(query: string): string {
-        const sheetId = this.table.db.sheetId;
-        const tableName = this.table.schema.tableName;
-        const encodedQuery = encodeURIComponent(query);
+const DATA_PREFIX = '/*O_o*/\ngoogle.visualization.Query.setResponse(';
 
-        return `https://docs.google.com/spreadsheets/d/` +
-                `${sheetId}/gviz/tq?sheet=${tableName}&tq=${encodedQuery}`;
+function createQueryUrl(query: string, table: SheetsTable): string {
+    const sheetId = table.db.sheetId;
+    const tableName = table.schema.tableName;
+    const encodedQuery = encodeURIComponent(query);
+
+    return `https://docs.google.com/spreadsheets/d/` +
+            `${sheetId}/gviz/tq?sheet=${tableName}&tq=${encodedQuery}`;
+}
+
+function extractJson(data: string): any {
+    const cleanedData = data
+        .substring(0, data.length - 2)
+        .replace(DATA_PREFIX, '');
+    return JSON.parse(cleanedData);
+}
+
+function extractResultSetFromJson(json: any, table: SheetsTable): SheetsResultSet {
+    const rows = json.table.rows;
+
+    // Handle strange issue where queries sometimes
+    // return the header row of labels.
+    if (rows.length > 1 && rows[0].c[0] === null) {
+        rows.shift();
     }
+    
+    const labels = json.table.cols.map((c: any) => c.label);
+    const labelledRows = addRowLabels(rows, labels);
+    const resultSetName = table.schema.tableName;
+    
+    return new SheetsResultSet(resultSetName, labelledRows);
+}
 
-    _extractJson(data: string): any {
-        const cleanedData = data
-            .substring(0, data.length - 2)
-            .replace(SheetsQuery._DATA_PREFIX, '');
-        return JSON.parse(cleanedData);
-    }
-
-    _extractResultSetFromJson(json: any): SheetsResultSet {
-        const rows = json.table.rows;
-
-        // Handle strange issue where queries sometimes
-        // return the header row of labels.
-        if (rows.length > 1 && rows[0].c[0] === null) {
-            rows.shift();
-        }
-        
-        const labels = json.table.cols.map((c: any) => c.label);
-        const labelledRows = this._addRowLabels(rows, labels);
-        const resultSetName = this.table.schema.tableName;
-        
-        return new SheetsResultSet(resultSetName, labelledRows);
-    }
-
-    _addRowLabels(rows: ResponseTableRow[], labels: string[]): SheetsResultSetRow[] {
-        return rows
-            // Handle empty cells
-            .map(r => r.c.map(c => c !== null ? c.v : null))
-            .map(r => {
-                const resultSetRow: SheetsResultSetRow = {};
-                r.map((v, i) => {
-                    resultSetRow[labels[i]] = v;
-                });
-                return resultSetRow;
+function addRowLabels(rows: ResponseTableRow[], labels: string[]): SheetsResultSetRow[] {
+    return rows
+        // Handle empty cells
+        .map(r => r.c.map(c => c !== null ? c.v : null))
+        .map(r => {
+            const resultSetRow: SheetsResultSetRow = {};
+            r.map((v, i) => {
+                resultSetRow[labels[i]] = v;
             });
-    }
+            return resultSetRow;
+        });
 }
