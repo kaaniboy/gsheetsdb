@@ -2,8 +2,6 @@ import SheetsQuery from './SheetsQuery';
 import SheetsDB from './SheetsDB';
 import { SheetsTableSchema, SheetsTableColumn } from './Types';
 
-type ColumnMappings = {[key: string]: string; };
-
 export default class SheetsTable {
     constructor(
         public db: SheetsDB,
