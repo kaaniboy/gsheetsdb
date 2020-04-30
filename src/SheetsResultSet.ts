@@ -1,5 +1,7 @@
 import { SheetsResultSetRow } from "./Types";
 
+type ColumnRenamings = { [key: string]: string; };
+
 export default class SheetsResultSet {
     constructor(
         public name: string,
@@ -18,7 +20,7 @@ export default class SheetsResultSet {
 
         const joinedRows = this.rows
             .map(leftRow => {
-                let matchingRightRow = right.first(rightRow => {
+                let matchingRightRow = first(right, rightRow => {
                     return leftRow[leftCol] === rightRow[rightCol];
                 }) || createEmptyRow(right.getColumns());
                 
@@ -42,16 +44,19 @@ export default class SheetsResultSet {
         return Object.keys(this.rows[0]);
     }
 
-    first(predicate: (r: SheetsResultSetRow) => boolean): SheetsResultSetRow {
-        const first = this.rows.find(r => {
-            return predicate(r);
-        });
-        return first || null;
-    }
+    withRenamedColumns(renamings: ColumnRenamings): SheetsResultSet {
+        if (!renamings) return this;
 
-    filter(predicate: (r: SheetsResultSetRow) => boolean): SheetsResultSet {
-        const filteredRows = this.rows.filter(predicate);
-        return new SheetsResultSet(this.name, filteredRows);
+        const renamedRows = this.rows.map(r => {
+            let renamedRow = {...r};
+            for (let [oldName, newName] of Object.entries(renamings)) {
+                if (!(oldName in renamedRow)) continue;
+                renamedRow[newName] = renamedRow[oldName];
+                delete renamedRow[oldName];
+            }
+            return renamedRow;
+        });
+        return new SheetsResultSet(this.name, renamedRows);
     }
 
     size(): number {
@@ -107,4 +112,12 @@ function createEmptyRow(
     let emptyRow: SheetsResultSetRow = {};
     columns.forEach(c => emptyRow[c] = null);
     return emptyRow;
+}
+
+function first(
+    resultSet: SheetsResultSet,
+    predicate: (r: SheetsResultSetRow) => boolean
+): SheetsResultSetRow {
+    const first = resultSet.rows.find(predicate);
+    return first || null;
 }
