@@ -10,7 +10,8 @@ import SheetsResultSet from './SheetsResultSet';
         cols: [
             { name: 'id' },
             { name: 'name' },
-            { name: 'age'}
+            { name: 'age'},
+            { name: 'dob'}
         ]
     });
 
@@ -27,8 +28,6 @@ import SheetsResultSet from './SheetsResultSet';
         "SELECT |id|, |user_id|, |name|"
     );
     const users = <SheetsResultSet> await db.table('users').query(
-        "SELECT |id|, |name|, |age|"
+        "SELECT |id|, |name|, |age|, |dob|"
     );
-
-    console.log(orders.leftJoinWith(users, 'user_id', 'id'));
 })();

@@ -25,17 +25,17 @@ export default class SheetsQuery {
         }
         
         const json = extractJson(res.data);
-        
+         
         if (json.errors) {
             const message = json.errors[0].detailed_message;
             return queryError(message, query, this.debugMode);
         }
-
         return extractResultSetFromJson(json, this.table);
     }
 }
 
 const DATA_PREFIX = '/*O_o*/\ngoogle.visualization.Query.setResponse(';
+const DATETIME_PREFIX = 'Date(';
 
 function createQueryUrl(query: string, table: SheetsTable): string {
     const sheetId = table.db.sheetId;
@@ -63,16 +63,21 @@ function extractResultSetFromJson(json: any, table: SheetsTable): SheetsResultSe
     }
     
     const labels = json.table.cols.map((c: any) => c.label);
-    const labelledRows = addRowLabels(rows, labels);
     const resultSetName = table.schema.tableName;
     
-    return new SheetsResultSet(resultSetName, labelledRows);
+    const transformedRows = transformRows(rows, labels);
+    return new SheetsResultSet(resultSetName, transformedRows);
 }
 
-function addRowLabels(rows: ResponseTableRow[], labels: string[]): SheetsResultSetRow[] {
+function transformRows(
+    rows: ResponseTableRow[],
+    labels: string[]
+): SheetsResultSetRow[] {
     return rows
         // Handle empty cells
         .map(r => r.c.map(c => c !== null ? c.v : null))
+        // Parse dates 
+        .map(r => r.map(c => isDate(c) ? parseDate(c) : c))
         .map(r => {
             const resultSetRow: SheetsResultSetRow = {};
             r.map((v, i) => {
@@ -80,4 +85,20 @@ function addRowLabels(rows: ResponseTableRow[], labels: string[]): SheetsResultS
             });
             return resultSetRow;
         });
+}
+
+function isDate(data: any): boolean {
+    return typeof data === 'string' 
+        && data.startsWith(DATETIME_PREFIX) 
+        && data.endsWith(')');
+}
+
+function parseDate(date: any): Date {
+    date = date
+        .replace(DATETIME_PREFIX, '')
+        .replace(')', '')
+        .trim();
+    const dateArgs: [number, number, number, number, number, number, number]
+        = date.split(',').map((v: any) => +v);
+    return new Date(...dateArgs);
 }

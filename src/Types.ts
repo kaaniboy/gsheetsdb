@@ -8,5 +8,5 @@ export interface SheetsTableColumn {
 }
 
 export interface SheetsResultSetRow {
-    [key: string]: number | string;
+    [key: string]: number | string | Date;
 }

@@ -58,10 +58,6 @@ export default class SheetsResultSet {
         });
         return new SheetsResultSet(this.name, renamedRows);
     }
-
-    size(): number {
-        return this.rows.length;
-    }
 }
 
 function getDuplicateColumns(
