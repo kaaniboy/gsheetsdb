@@ -22,7 +22,7 @@ A database is a spreadsheet in Google Sheets with the following properties:
 - The spreadsheet has public link sharing enabled
 
 [Here](https://docs.google.com/spreadsheets/d/1bf99MxyEbN--R4DR0MDhc0x-6UhxwPnYM1WITm5CIGs) is an example 
-spreadsheet meeting the requirements for SheetsDB.
+spreadsheet meeting the requirements for _SheetsDB_.
 
 #### Connect
 
