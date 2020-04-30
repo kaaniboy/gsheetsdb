@@ -26,7 +26,7 @@ spreadsheet meeting the requirements for _SheetsDB_.
 
 #### Connect
 
-_SheetsDB_ connects to a database via it's `spreadsheet ID`, which can be found in the Google Sheets URL:
+_SheetsDB_ connects to a database via its `spreadsheet ID`, which can be found in the Google Sheets URL:
 
 ```shell
 https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit
@@ -130,5 +130,5 @@ resultSet.withRenamedColumns({
 ---
 
 ## Future Work
-- Support mutation of database tables
+- Support `CREATE`, `UPDATE`, and `DELETE` operations
 - Add support for other types of joins (eg, inner and outer joins)
