@@ -2,11 +2,7 @@
 
 ![Tests](https://github.com/kaaniboy/sheetsDB.js/workflows/Tests/badge.svg)
 
-A JavaScript library for interacting with a Google Sheets spreadsheet as if it were a relational database, supporting complex queries with aggregate functions and joins. 
-
-Ideal for static websites that need to display dynamic data. 
-
----
+A JavaScript library for interacting with a Google Sheets spreadsheet as if it were a relational database, supporting complex queries with aggregate functions and joins. Ideal for static websites that need to display dynamic data. 
 
 ## Installation
 
@@ -30,7 +26,7 @@ spreadsheet meeting the requirements for SheetsDB.
 
 #### Connect
 
-SheetsDB connects to a database via it's `spreadsheet ID`, which can be found in the Google Sheets URL:
+_SheetsDB_ connects to a database via it's `spreadsheet ID`, which can be found in the Google Sheets URL:
 
 ```shell
 https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit
@@ -43,13 +39,14 @@ const db = new SheetsDB('<SPREADSHEET_ID>');
 
 #### Link a table
 
-To interact with tables in the database, you must first link the table. When linking, it is 
+To interact with tables in the database, you must first link the tables. When linking, it is 
 important to list columns in the order they appear in the spreadsheet.
 
 ```
 db.linkTable({
     tableName: 'orders',
     cols: [
+        // Order should match the spreadsheet
         { name: 'id' },
         { name: 'product' },
         { name: 'price'}
@@ -59,10 +56,10 @@ db.linkTable({
 
 ## Querying
 
-SheetsDB provides a SQL-like query language. More specifically, it supports the 
-[Charts Query Language](https://developers.google.com/chart/interactive/docs/querylanguage).
+_SheetsDB_ provides a SQL-like query language. More specifically, it supports the 
+[Google Charts Query Language](https://developers.google.com/chart/interactive/docs/querylanguage).
 
-When writing queries, column names should be wrapped in pipes, such as `|column_name|`. 
+When writing queries, column names should be wrapped in pipes, like `|column_name|`. 
 Below is a simple query:
 
 ```
@@ -79,7 +76,7 @@ const resultSet = await db.table('orders').query(
 );
 ```
 
-Queries return a result set with a `rows` properties containing the queried data:
+Queries return a result set with a `rows` property containing the queried data:
 ```
 {
     rows: [
@@ -88,6 +85,9 @@ Queries return a result set with a `rows` properties containing the queried data
     ]
 }
 ```
+
+Values in the result set are automatically converted to their proper JavaScript type. The supported 
+types are _strings_, _numbers_, and _datetimes_.
 
 ## Joins
 
@@ -100,7 +100,7 @@ leftJoinWith(rightTable, leftTableColumn, rightTableColumn)
 If the two joined tables contain duplicate column names, those columns are prefixed 
 by the table name followed by an underscore.
 
-The following is an example join between a user's and order's table:
+The following is an example join between a users and orders table:
 
 ```
 const ordersWithUser = orders.leftJoinWith(users, 'user_id', 'id');
@@ -132,5 +132,3 @@ resultSet.withRenamedColumns({
 ## Future Work
 - Support mutation of database tables
 - Add support for other types of joins (eg, inner and outer joins)
-
-
