@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   mode: 'development',
-  entry: './src/main.ts',
+  entry: './src/SheetsDB.ts',
   devtool: 'inline-source-map',
   module: {
     rules: [
@@ -17,7 +17,7 @@ module.exports = {
     extensions: [ '.tsx', '.ts', '.js' ],
   },
   output: {
-    filename: 'sheetsdb.js',
+    filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
   },
   devServer: {

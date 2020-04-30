@@ -6,8 +6,12 @@
       "moduleResolution": "Node",
       "target": "es5",
       "lib": ["ES2018"],
+      "declaration": true,
+      "declarationDir": "./dist",
       "allowJs": true,
-      "sourceMap": true,
+      "sourceMap": false,
       "esModuleInterop": true
-    }
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist"]
   }

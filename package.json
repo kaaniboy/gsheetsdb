@@ -1,15 +1,36 @@
 {
-  "name": "sheets-dbms",
+  "name": "gsheetsdb",
+  "author": "Kaan Aksoy (aksoy.io)",
+  "description": "Interact with Google Sheets as if it were a relational database.",
   "version": "1.0.0",
-  "description": "",
-  "main": "sheetsdb.js",
-  "private": true,
+  "main": "./dist/main.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaaniboy/gsheetsdb"
+  },
+  "homepage": "https://github.com/kaaniboy/gsheetsdb",
+  "keywords": [
+    "database",
+    "google",
+    "spreadsheet",
+    "sql",
+    "static",
+    "query",
+    "join",
+    "gsheetsdb",
+    "sheetsdb",
+    "aggregate"
+  ],
+  "license": "ISC",
   "scripts": {
     "start": "npx webpack-dev-server --open",
-    "test": "npx jest"
+    "test": "npx jest",
+    "build": "rm -rf ./dist/* && tsc"
   },
-  "author": "Kaan Aksoy",
-  "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2"
   },

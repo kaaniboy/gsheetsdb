@@ -6,7 +6,7 @@ type Tables = { [key: string]: SheetsTable; };
 export default class SheetsDB {
     tables: Tables;
 
-    constructor(public sheetId: string, public debugMode = true) {
+    constructor(public sheetId: string, public debugMode = false) {
         this.tables = {};
     }
 
