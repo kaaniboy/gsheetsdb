@@ -14,17 +14,23 @@ export default class SheetsResultSet {
         const duplicateColumns = getDuplicateColumns(
             [...this.getColumns(), ...right.getColumns()]
         );
+        duplicateColumns.delete(rightCol);
 
-        const joinedRows = this.rows.map(leftRow => {
-            let matchingRightRow = right.first(rightRow => {
-                return leftRow[leftCol] === rightRow[rightCol];
-            }) || createEmptyRow(right.getColumns());
+        const joinedRows = this.rows
+            .map(leftRow => {
+                let matchingRightRow = right.first(rightRow => {
+                    return leftRow[leftCol] === rightRow[rightCol];
+                }) || createEmptyRow(right.getColumns());
+                
+                // Remove redundant join column in right table
+                matchingRightRow = {...matchingRightRow};
+                delete matchingRightRow[rightCol];
 
-            return {
-                ...prefixColumns(this.name, leftRow, duplicateColumns),
-                ...prefixColumns(right.name, matchingRightRow, duplicateColumns)
-            };
-        });
+                return {
+                    ...prefixColumns(this.name, leftRow, duplicateColumns),
+                    ...prefixColumns(right.name, matchingRightRow, duplicateColumns)
+                };
+            });
 
         return new SheetsResultSet(this.name, joinedRows);
     }
@@ -41,6 +47,15 @@ export default class SheetsResultSet {
             return predicate(r);
         });
         return first || null;
+    }
+
+    filter(predicate: (r: SheetsResultSetRow) => boolean): SheetsResultSet {
+        const filteredRows = this.rows.filter(predicate);
+        return new SheetsResultSet(this.name, filteredRows);
+    }
+
+    size(): number {
+        return this.rows.length;
     }
 }
 
@@ -77,7 +92,7 @@ function prefixColumns(
 
     for (let k of keys) {
         if (duplicateColumns.has(k)) {
-            prefixedRow[`${resultSetName}.${k}`] = row[k];
+            prefixedRow[`${resultSetName}_${k}`] = row[k];
         } else {
             prefixedRow[k] = row[k];
         }
