@@ -4,6 +4,7 @@
   "description": "Interact with Google Sheets as if it were a relational database.",
   "version": "1.0.0",
   "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
   "files": [
     "dist",
     "README.md"
