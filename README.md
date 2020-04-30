@@ -2,7 +2,7 @@
 
 ![Tests](https://github.com/kaaniboy/gsheetsdb/workflows/Tests/badge.svg)
 
-A JavaScript library for interacting with a Google Sheets spreadsheet as if it were a relational database, supporting complex queries with aggregate functions and joins. Ideal for static websites that need to display dynamic data. 
+A TypeScript/JavaScript library for interacting with a Google Sheets spreadsheet as if it were a relational database, supporting complex queries with aggregate functions and joins. Ideal for static websites that need to display dynamic data. 
 
 ## Installation
 
