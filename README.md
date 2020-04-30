@@ -1,13 +1,13 @@
-# SheetsDB 💾
+# GSheetsDB 💾
 
-![Tests](https://github.com/kaaniboy/sheetsDB.js/workflows/Tests/badge.svg)
+![Tests](https://github.com/kaaniboy/gsheetsDB.js/workflows/Tests/badge.svg)
 
 A JavaScript library for interacting with a Google Sheets spreadsheet as if it were a relational database, supporting complex queries with aggregate functions and joins. Ideal for static websites that need to display dynamic data. 
 
 ## Installation
 
 ```shell
-npm install sheetsdb
+npm install gsheetsdb
 ```
 
 ## Setup
@@ -22,11 +22,11 @@ A database is a spreadsheet in Google Sheets with the following properties:
 - The spreadsheet has public link sharing enabled
 
 [Here](https://docs.google.com/spreadsheets/d/1bf99MxyEbN--R4DR0MDhc0x-6UhxwPnYM1WITm5CIGs) is an example 
-spreadsheet meeting the requirements for _SheetsDB_.
+spreadsheet meeting the requirements for _GSheetsDB_.
 
 #### Connect
 
-_SheetsDB_ connects to a database via its `spreadsheet ID`, which can be found in the Google Sheets URL:
+_GSheetsDB_ connects to a database via its `spreadsheet ID`, which can be found in the Google Sheets URL:
 
 ```shell
 https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit
@@ -56,7 +56,7 @@ db.linkTable({
 
 ## Querying
 
-_SheetsDB_ provides a SQL-like query language. More specifically, it supports the 
+_GSheetsDB_ provides a SQL-like query language. More specifically, it supports the 
 [Google Charts Query Language](https://developers.google.com/chart/interactive/docs/querylanguage).
 
 When writing queries, column names should be wrapped in pipes, like `|column_name|`. 
@@ -125,7 +125,6 @@ resultSet.withRenamedColumns({
     'oldColumn2': 'newColumn2'
 });
 ```
-
 
 ---
 
