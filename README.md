@@ -4,6 +4,8 @@
 
 A TypeScript/JavaScript library for interacting with a Google Sheets spreadsheet as if it were a relational database, supporting complex queries with aggregate functions and joins. Ideal for static websites that need to display dynamic data. 
 
+You can read more about _GSheetsDB_ on [npm](https://www.npmjs.com/package/gsheetsdb).
+
 ## Installation
 
 ```shell
